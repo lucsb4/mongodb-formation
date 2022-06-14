@@ -1,0 +1,29 @@
+on client::
+> show databases
+
+will create and use the database
+> use [database_name]
+
+criar uma coleção
+db.createCollection(name, options)
+options: specify memory size, indexing, etc.
+> db.createCollection("collection_name")
+
+show collections
+> show collections
+||
+> db.getCollectionNames()
+
+INSERT
+db.[collection].insert([object])
+
+SHOW DOCUMENT
+db.[collection].find()
+ou
+db.[collection].find().pretty()
+
+DROP COLLECTION
+db.[collection].drop()
+
+https://www.npmjs.com/package/mongodb
+https://www.npmjs.com/package/inquirer

@@ -1,0 +1,15 @@
+PROF: Marco Mendão
+
+DOCUMENT: a set of key-value pairs. Has a dynamic schema.
+COLLECTION: is a group of MongoDB documents.
+DATABASE: is a physical container for collections.
+
+Advantages: scalability, cloud support, easy to enter new keys
+simple query system.
+Horizontal scalability: connected nodes
+
+run local database
+> mongodb --dbpath [directory]
+
+run client
+> mongo
