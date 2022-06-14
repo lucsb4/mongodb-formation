@@ -17,15 +17,51 @@ client.connect();
 
 const database = client.db("contacts");
 
-const listContactLists = async () => {
+const listCollections = async () => {
   const collections = await database.listCollections().toArray();
   const formattedCollections = collections.map((collection) => {
     return {
-      name: collection.name,
-      type: collection.type,
+      name: collection.name
     };
   });
   console.table(formattedCollections);
+  menu();
+};
+
+const createCollection = async () => {
+  try {
+    const ans = await inquirer.prompt([
+      {
+        type: "input",
+        name: "collectionName",
+        message: "Type collection name"
+      }
+    ]);
+
+    database.createCollection(ans.collectionName);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    menu();
+  }
+};
+
+const removeCollection = async () => {
+  try {
+    const ans = await inquirer.prompt([
+      {
+        type: "input",
+        name: "collectionName",
+        message: "Type collection name"
+      }
+    ]);
+
+    database.dropCollection(ans.collectionName);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    menu();
+  }
 };
 
 const menu = function () {
@@ -38,20 +74,20 @@ const menu = function () {
         choices: [
           "List Contact Lists",
           "Create Contact List",
-          "Remove Contact List",
-        ],
-      },
+          "Remove Contact List"
+        ]
+      }
     ])
     .then((answers) => {
       switch (answers["action"]) {
         case "List Contact Lists":
-          listContactLists();
+          listCollections();
           break;
         case "Create Contact List":
-          // createContactList();
+          createCollection();
           break;
         case "Remove Contact List":
-          // removeContactList();
+          removeCollection();
           break;
         default:
           console.log("Default behaviour.");
