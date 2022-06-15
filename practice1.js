@@ -19,11 +19,9 @@ const database = client.db("contacts");
 
 const listCollections = async () => {
   const collections = await database.listCollections().toArray();
-  const formattedCollections = collections.map((collection) => {
-    return {
-      name: collection.name
-    };
-  });
+  const formattedCollections = collections.map((collection) => ({
+    name: collection.name
+  }));
   console.table(formattedCollections);
   menu();
 };
