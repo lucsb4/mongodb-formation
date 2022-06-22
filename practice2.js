@@ -24,23 +24,59 @@ const createContacts = async (contactList) => {
   try {
     const ans = await inquirer.prompt([
       {
-        type: "input",
-        name: "contactToInsert",
-        message: "Type the contact to insert: "
+        type: "list",
+        name: "insertType",
+        choices: ["By field", "JSON"]
       }
     ]);
 
-    console.log(ans);
+    if (ans.insertType === "By field") {
+      try {
+        const field = await inquirer.prompt([
+          {
+            type: "input",
+            name: "name",
+            message: "Type the name of the contact: "
+          },
+          {
+            type: "input",
+            name: "age",
+            message: "Type the age of the contact: "
+          }
+        ]);
 
-    db.collection(contactList)
-      .insertOne(JSON.parse(ans.contactToInsert))
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error));
+        db.collection(contactList)
+          .insertOne({ name: field.name, age: Number(field.age) })
+          .then((response) => console.log(response))
+          .catch((error) => console.error(error));
+        menu();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    if (ans.insertType === "JSON") {
+      try {
+        const ans = await inquirer.prompt([
+          {
+            type: "input",
+            name: "jsonToInsert",
+            message: "Type the contact to insert: "
+          }
+        ]);
+
+        db.collection(contactList)
+          .insertOne(JSON.parse(ans.jsonToInsert))
+          .then((response) => console.log(response))
+          .catch((error) => console.error("onInsert Error::", error));
+        menu();
+      } catch (error) {
+        console.error("inquirer Error::", error);
+      }
+    }
   } catch (error) {
     console.error(error);
   }
-
-  menu();
 };
 
 const removeContacts = async (contactList) => {
@@ -72,8 +108,8 @@ const menu = () => {
     .prompt([
       {
         type: "input",
-        name: "contactList",
-        message: "Type a contact list: "
+        name: "selectedCollection",
+        message: "Type the collection to use: "
       },
       {
         type: "rawlist",
@@ -83,16 +119,16 @@ const menu = () => {
       }
     ])
     .then((answers) => {
-      const { contactList, action } = answers;
+      const { selectedCollection, action } = answers;
       switch (action) {
         case "List Contacts":
-          listContacts(contactList);
+          listContacts(selectedCollection);
           break;
         case "Create Contacts":
-          createContacts(contactList);
+          createContacts(selectedCollection);
           break;
         case "Remove Contacts":
-          removeContacts(contactList);
+          removeContacts(selectedCollection);
           break;
         default:
           menu();
