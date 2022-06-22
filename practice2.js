@@ -1,6 +1,5 @@
 const inquirer = require("inquirer");
-const Mongo = require("mongodb");
-const { MongoClient } = Mongo;
+const { MongoClient, ObjectId } = require("mongodb");
 
 const url = "mongodb://localhost:27017";
 const client = new MongoClient(url);
@@ -12,6 +11,7 @@ const listContacts = async (contactList) => {
   const contacts = await db.collection(contactList).find().toArray();
 
   const formattedContacts = contacts.map((contact) => ({
+    id: contact._id,
     name: contact.name,
     age: contact.age
   }));
@@ -49,14 +49,15 @@ const removeContacts = async (contactList) => {
       {
         type: "input",
         name: "contactToDelete",
-        message: "Type the name of the contact to delete: "
+        message: "Type the id of the contact to delete: "
       }
     ]);
 
     console.log(ans);
 
     db.collection(contactList)
-      .deleteOne({ name: { $eq: ans.contactToDelete } })
+      // .deleteOne({ name: { $eq: ans.contactToDelete } })
+      .deleteOne({ _id: ObjectId(ans.contactToDelete) })
       .then((response) => console.log(response))
       .catch((error) => console.error(error));
   } catch (error) {
@@ -78,7 +79,7 @@ const menu = () => {
         type: "rawlist",
         name: "action",
         message: "Choose an action: ",
-        choices: ["List Contacts", "Create Contacts", "Remove Contacts", "Exit"]
+        choices: ["List Contacts", "Create Contacts", "Remove Contacts"]
       }
     ])
     .then((answers) => {
@@ -93,8 +94,6 @@ const menu = () => {
         case "Remove Contacts":
           removeContacts(contactList);
           break;
-        case "Exit":
-          return;
         default:
           menu();
       }
