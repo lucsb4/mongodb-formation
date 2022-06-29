@@ -1,0 +1,12 @@
+db
+.best_books
+.find( {$and: [
+  {rating: {$gt: 4.5}}, {language: {$ne: "English"}}
+  ]},
+  {title: true, rating: true, _id: 0} )
+  .limit(10)
+  .skip()
+  .sort({rating: -1})
+  .pretty()
+
+  ...etc
